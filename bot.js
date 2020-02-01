@@ -1,9 +1,11 @@
 const Discord = require('discord.js');
-const token = 'NjczMDUyMTA3NjAzMDUwNDk2.XjWflQ.WwCKdzZ5b64jMZ42U0id1Fksn3U';
+const token = 'NjczMDUyMTA3NjAzMDUwNDk2.XjXZZA.h8bSAA2UUAEPg_fTXkoKzAl6AMk';
 const client = new Discord.Client();
 
 const path = require('path');
 const ffmpeg = require('fluent-ffmpeg');
+
+client.on('guildMemberSpeaking', handleSpeaking.bind(this));
 
 ffmpeg.setFfmpegPath(path.resolve(__dirname, 'node_modukes', '.bin', 'ffmpeg'));
 ffmpeg.setFfprobePath(
@@ -26,32 +28,49 @@ client.on('message', (message) => {
     } */
 });
 
-/*Chris is testing out
-connection.on('speaking', (user, speaking)=>{
-    if(speaking){
-        console.log('I am listening to' + user.username);
-    }
-    else{
-        console.log('I stopped listening to' + user.username);
-    }
-}) */
-
-
 client.on('message', async message => {
-    
-    if(/*message.member.voiceChannel && !message.author.bot &&*/ message.content === '!help')
+
+    if(message.content === '!join')
     {
         message.member.voiceChannel.join()
         .then(connection =>{
-            message.reply("Bot has join!");
+            message.reply("Bot has joined!");
         })
     }
-  });
 
-  /*
-client.on('guildMemberSpeaking', (oldMember, newMember) => {
-    
+    if(message.content === '!leave'){
+        message.guild.voiceConnection.disconnect()
+            message.reply("Bot has left!");
+    }
 });
-*/
 
+    
+function handleSpeaking(member, speaking) {
+    
+    
+    if(speaking){
+        console.log(member.id);
+        member.speaking = false;
+    }
+    else{
+        console.log(`is the else statement working???`)
+    }
+    
+}
+
+    //const memeberId = member.client.id;
+    //console.log(memeberId);
+    
+    /*
+    if(speaking && member.voiceChannel){
+        console.log('listening');
+        console.log(member.client.user.tag);
+    }
+    if(!speaking && member.voiceChannel)
+        console.log('not listening');
+
+        */
+       
 client.login(token);
+
+

@@ -18,6 +18,12 @@
   },
   "homepage": "https://github.com/Dund0/AcessibilityTeam2#readme",
   "dependencies": {
-    "discord.js": "^11.5.1"
+    "@google-cloud/speech": "^3.5.4",
+    "discord.js": "^11.5.1",
+    "ffmpeg": "0.0.4",
+    "ffmpeg-binaries": "^4.0.0",
+    "ffprobe": "^1.1.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "opusscript": "0.0.7"
   }
 }

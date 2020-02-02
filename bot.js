@@ -1,11 +1,12 @@
 const Discord = require('discord.js');
-const token = 'NjczMDUyMTA3NjAzMDUwNDk2.XjYAPw.UCIsr3MzzbpkYMaSqnZ5xWbSk20';
+require('dotenv').config()
+const token = 'NjczMDUyMTA3NjAzMDUwNDk2.XjaCnw.LALdZ7Q8sqVDpRcNO8ETsYs_0Hk';
 const client = new Discord.Client();
 const fs = require('fs');
 
 const path = require('path');
 const ffmpeg = require('fluent-ffmpeg');
-
+const {Transform} = require ('stream');
 
 ffmpeg.setFfmpegPath(path.resolve(__dirname, 'node_modukes', '.bin', 'ffmpeg'));
 ffmpeg.setFfprobePath(
@@ -16,17 +17,14 @@ client.on('ready', () => {
     console.log('Bot is now connected. LOgged in as, ' + client.user.tag);
 });
 
+client.login(token);
+
 client.on('message', (message) => {
-    //console.log(message);
     if(message.content === '!hello'){
         message.channel.send('Hello, ' + message.author + '!');
     }
-
-    /*else {
-        if(!message.author.bot)
-            message.channel.send(message.author + ', said ' + message.content);
-    } */
 });
+
 
 client.on('message', async message => {
 
@@ -36,8 +34,12 @@ client.on('message', async message => {
         .then(connection =>{
             message.reply("Bot has joined!");
         });
-        
-        
+    }
+
+    if(message.content === '!script')
+    {
+        //main();
+        //message.reply(main());
     }
 
     if(message.content === '!leave'){
@@ -50,17 +52,36 @@ client.on('message', async message => {
     }
 });
 
+
 function createOutput(user){
     const tempFile = './resources/audio'+ user.username + '.pcm';
     console.log('Went here.');
     return fs.createWriteStream(tempFile);
 }
-    
+/*    
+//function to transform pcm to 1 channel
+    function convertBufferTo1Channel(buffer) {
+        const convertedBuffer = Buffer.alloc(buffer.length / 2)
+  
+        for (let i = 0; i < convertedBuffer.length / 2; i++) {
+        const uint16 = buffer.readUInt16LE(i * 4)
+        convertedBuffer.writeUInt16LE(uint16, i * 2)
+        }
+  
+        return convertedBuffer
+    }
+  
+    class ConvertTo1ChannelStream extends Transform {
+        constructor(source, options) {
+        super(options)
+        }
+  
+     _transform(data, encoding, next) {
+          next(null, convertBufferTo1Channel(data))
+        }    
+    }*/
 
 client.on('guildMemberSpeaking', function(member, speaking){
-        
-
-        //main();
         
         const voiceConnection =  member.voiceChannel.join();
         const voiceChannel = member.voiceChannel;
@@ -79,21 +100,15 @@ client.on('guildMemberSpeaking', function(member, speaking){
                     audioStream.pipe(outputStream);
 
                     outputStream.on("data", console.log);
-
-                    member.speaking = false;
                 }
                 else{
                     console.log(`is the else statement working???`);
                 }
             });
+
  
 });
-//async function handleSpeaking(member, speaking) {
-    
-//}
 
-
-/*
 async function main() {
     // Imports the Google Cloud client library
     const speech = require('@google-cloud/speech');
@@ -115,12 +130,12 @@ async function main() {
     };
     const config = {
       encoding: 'LINEAR16',
-      sampleRateHertz: 16000,
-      languageCode: 'en-US',
+      sampleRateHertz: 44100, //16000
+      languageCode: 'en-US'
     };
     const request = {
       audio: audio,
-      config: config,
+      config: config
     };
   
     // Detects speech in the audio file
@@ -129,46 +144,6 @@ async function main() {
       .map(result => result.alternatives[0].transcript)
       .join('\n');
     console.log(`Transcription: ${transcription}`);
+    return '' + transcription;
   }
   main().catch(console.error);
-
-    //const memeberId = member.client.id;
-    //console.log(memeberId);
-    
-    /*
-    if(speaking && member.voiceChannel){
-        console.log('listening');
-        console.log(member.client.user.tag);
-    }
-    if(!speaking && member.voiceChannel)
-        console.log('not listening');
-
-        */
-       
-client.login(token);
-
-
-/*
-voiceChannel.join()
-.then(conn => {
-  // create our voice receiver
-  const receiver = voiceConnection.createReceiver();
-
-  conn.on('speaking', (user, speaking) => {
-    if (speaking) {
-      msg.channel.sendMessage(`I'm listening to ${user}`);
-      // this creates a 16-bit signed PCM, stereo 48KHz PCM stream.
-      const audioStream = receiver.createPCMStream(user);
-      // create an output stream so we can dump our data in a file
-      const outputStream = generateOutputFile(voiceChannel, user);
-      // pipe our audio data into the file stream
-      audioStream.pipe(outputStream);
-      outputStream.on("data", console.log);
-      // when the stream ends (the user stopped talking) tell the user
-      audioStream.on('end', () => {
-        msg.channel.sendMessage(`I'm no longer listening to ${user}`);
-      });
-    }
-  });
-})
-*/

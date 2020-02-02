@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 require('dotenv').config()
-const token = 'NjczMDUyMTA3NjAzMDUwNDk2.XjaCnw.LALdZ7Q8sqVDpRcNO8ETsYs_0Hk';
+const token = 'NjczMDUyMTA3NjAzMDUwNDk2.XjcCqw.XgMRGLP-Tqm2RY90DC44kgUkwqM';
 const client = new Discord.Client();
 const fs = require('fs');
 
@@ -14,25 +14,26 @@ ffmpeg.setFfprobePath(
 );
 
 client.on('ready', () => {
-    console.log('Bot is now connected. LOgged in as, ' + client.user.tag);
+    console.log('Bot is now connected. Logged in as, ' + client.user.tag);
 });
 
 client.login(token);
 
+// a simple greeting from bot to user
 client.on('message', (message) => {
     if(message.content === '!hello'){
         message.channel.send('Hello, ' + message.author + '!');
     }
 });
 
-
+// list of commands for users to use in chat
 client.on('message', async message => {
 
     if(message.content === '!join')//joins voice channel
     {
         message.member.voiceChannel.join()
         .then(connection =>{
-            message.reply("Bot has joined!");
+            message.reply("I am here for your service!");
         });
     }
 
@@ -44,43 +45,30 @@ client.on('message', async message => {
 
     if(message.content === '!leave'){
         message.guild.voiceConnection.disconnect()
-            message.reply("Bot has left!");
+            message.reply("I will be right back!");
     }
 
-    if(message.content === '!listen'){
-        
+    if(message.content === '!info')
+    {
+        let sEmbed = new Discord.RichEmbed()
+        .setTitle("Server Info")
+        .setThumbnail(message.guild.displayAvatarURL)
+        .addField("**Guild Name:**", `${message.guild.name}`, true)
+        .addField("**Guild Members:**", `${message.guild.memberCount}`, true)
+        .addField("**Bot Commands:**", "``!info`` ``!join`` ``!leave`` ``!hello``")
+        .setFooter(`Accessibility | 2020`, client.user.displayAvatarURL);
+        message.channel.send({embed: sEmbed});
     }
 });
 
-
+//Creates an audio file from talking members
 function createOutput(user){
     const tempFile = './resources/audio'+ user.username + '.pcm';
     console.log('Went here.');
     return fs.createWriteStream(tempFile);
 }
-/*    
-//function to transform pcm to 1 channel
-    function convertBufferTo1Channel(buffer) {
-        const convertedBuffer = Buffer.alloc(buffer.length / 2)
-  
-        for (let i = 0; i < convertedBuffer.length / 2; i++) {
-        const uint16 = buffer.readUInt16LE(i * 4)
-        convertedBuffer.writeUInt16LE(uint16, i * 2)
-        }
-  
-        return convertedBuffer
-    }
-  
-    class ConvertTo1ChannelStream extends Transform {
-        constructor(source, options) {
-        super(options)
-        }
-  
-     _transform(data, encoding, next) {
-          next(null, convertBufferTo1Channel(data))
-        }    
-    }*/
 
+// bot detects all of the talking members in voice chat and records an audio 
 client.on('guildMemberSpeaking', function(member, speaking){
         
         const voiceConnection =  member.voiceChannel.join();
@@ -109,6 +97,7 @@ client.on('guildMemberSpeaking', function(member, speaking){
  
 });
 
+/*GOOGLE CLOUD CONFIGS*/
 async function main() {
     // Imports the Google Cloud client library
     const speech = require('@google-cloud/speech');
@@ -147,3 +136,28 @@ async function main() {
     return '' + transcription;
   }
   main().catch(console.error);
+
+  
+  // transformer from PCM to suitable file for google cloud
+/*    
+//function to transform pcm to 1 channel
+    function convertBufferTo1Channel(buffer) {
+        const convertedBuffer = Buffer.alloc(buffer.length / 2)
+  
+        for (let i = 0; i < convertedBuffer.length / 2; i++) {
+        const uint16 = buffer.readUInt16LE(i * 4)
+        convertedBuffer.writeUInt16LE(uint16, i * 2)
+        }
+  
+        return convertedBuffer
+    }
+  
+    class ConvertTo1ChannelStream extends Transform {
+        constructor(source, options) {
+        super(options)
+        }
+  
+     _transform(data, encoding, next) {
+          next(null, convertBufferTo1Channel(data))
+        }    
+    }*/
